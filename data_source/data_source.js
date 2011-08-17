@@ -1,7 +1,5 @@
 Drupal.DataSource = SC.DataSource.extend({
 
-  _urlFor: LemonadeStand._urlFor,
-
   areEntitiesLoaded: NO,
   /**
    * Fetch a number of records.
@@ -9,7 +7,7 @@ Drupal.DataSource = SC.DataSource.extend({
   fetch: function(store, query) {
     var recordType = query.recordType;
     if (query === SC.Query.local(LemonadeStand.User)) {
-      SC.Request.getUrl(this._urlFor(recordType))
+      SC.Request.getUrl(Drupal._urlFor(recordType))
         .set('isJSON', YES)
         .notify(this, this._didFetchAllUsers, { query: query, store: store })
         .send();
@@ -45,7 +43,7 @@ Drupal.DataSource = SC.DataSource.extend({
     // map storeKey back to record type
     var recordType = SC.Store.recordTypeFor(storeKey);
     // we can handle it, get the URL.
-    SC.Request.getUrl(this._urlFor('user',store.idFor(storeKey)))
+    SC.Request.getUrl(Drupal._urlFor('user',store.idFor(storeKey)))
       .set('isJSON', YES)
       .notify(this, this._didRetrieveRecord, {
         store: store,
@@ -95,9 +93,9 @@ Drupal.DataSource = SC.DataSource.extend({
 
   getFieldsFromResults: function(entity_type, bundle_name, records, store, model) {
 
-    var fields = LemonadeStand.entityController.fieldInfoInstances('user','user');
-    var fields_info = LemonadeStand.entityController.fieldInfoInstances(entity_type, bundle_name);
-    var entity_info = LemonadeStand.entityController.entityGetInfo(entity_type);
+    var fields = Drupal.entityController.fieldInfoInstances('user','user');
+    var fields_info = Drupal.entityController.fieldInfoInstances(entity_type, bundle_name);
+    var entity_info = Drupal.entityController.entityGetInfo(entity_type);
 
     primary_key = entity_info['entity keys']['id'];
 
