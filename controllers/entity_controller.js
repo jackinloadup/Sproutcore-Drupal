@@ -1,8 +1,8 @@
 // ==========================================================================
-// Project:   LemonadeStand.entityController
+// Project:   Drupal.entityController
 // Copyright: @2011 My Company, Inc.
 // ==========================================================================
-/*globals LemonadeStand */
+/*globals Drupal */
 
 /** @class
 
@@ -11,7 +11,7 @@
   @extends SC.Object
 */
 Drupal.entityController = SC.ObjectController.create(
-/** @scope LemonadeStand.entityController.prototype */ {
+/** @scope Drupal.entityController.prototype */ {
 
   loadInfo: function() {
     var request = SC.Request.getUrl(Drupal._urlFor('entity'));
@@ -29,7 +29,7 @@ Drupal.entityController = SC.ObjectController.create(
 
     this.generateModels();
 
-    LemonadeStand.loadData();
+    Drupal._app.loadData();
   },
 
   generateModels: function() {
@@ -59,18 +59,18 @@ Drupal.entityController = SC.ObjectController.create(
     name = name.classify();
 
     // intitate the bundle model
-    LemonadeStand[name] = SC.Record.extend({});
+    Drupal._app[name] = SC.Record.extend({});
 
     // hack to return the correct class name
     // there must be a better way to do this?
     // https://frozencanuck.wordpress.com/2010/08/18/lebowski-framework-failing-in-internet-explorer/#more-1496
-    LemonadeStand[name]._object_className = 'LemonadeStand.' + name;
+    Drupal._app[name]._object_className = 'Drupal._app.' + name;
 
     // fields are always objects... we dont want any of this array crap!
     if (!this.content['instances'][entity]['bundles'][bundle].isSCArray) {
  
       // entity resource doesn't currently pull in this info
-      LemonadeStand[name].prototype['primaryKey'] = this.content['instances'][entity]['schema_fields_sql']['base table']['primary key'][0];
+      Drupal._app[name].prototype['primaryKey'] = this.content['instances'][entity]['schema_fields_sql']['base table']['primary key'][0];
 
       // add fields from the base table
       for (field in this.content['instances'][entity]['schema_fields_sql']['base table']['fields']) {
@@ -80,7 +80,7 @@ Drupal.entityController = SC.ObjectController.create(
         // clean the name
         field = field.classify();
         
-        LemonadeStand[name].prototype[field] = this.buildFieldColumn(column);
+        Drupal._app[name].prototype[field] = this.buildFieldColumn(column);
       }
 
       // add Field API fields to the bundle
@@ -93,8 +93,8 @@ Drupal.entityController = SC.ObjectController.create(
         var cardinality = parseInt(field_info['cardinality']);
         if (cardinality === 1) {
           // create a toOne field relation
-          LemonadeStand[name].prototype[field_clean] = SC.Record.toOne(
-            'LemonadeStand.' + field_clean,
+          Drupal._app[name].prototype[field_clean] = SC.Record.toOne(
+            'Drupal._app.' + field_clean,
             { inverse: 'guid',
               isMaster: YES,
             }
@@ -102,8 +102,8 @@ Drupal.entityController = SC.ObjectController.create(
         }
         else {
           // create a toMany field relation
-          LemonadeStand[name].prototype[field_clean] = SC.Record.toMany(
-            'LemonadeStand.' + field_clean,
+          Drupal._app[name].prototype[field_clean] = SC.Record.toMany(
+            'Drupal._app.' + field_clean,
             { inverse: 'guid',
               isMaster: YES,
             }
@@ -122,10 +122,10 @@ Drupal.entityController = SC.ObjectController.create(
       var field_name_clean = field_name.classify();
 
       // initiate field model
-      LemonadeStand[field_name_clean] = SC.Record.extend({});
+      Drupal._app[field_name_clean] = SC.Record.extend({});
 
       // hack see above
-      LemonadeStand[field_name_clean]._object_className = 'LemonadeStand.' + field_name_clean;
+      Drupal._app[field_name_clean]._object_className = 'Drupal._app.' + field_name_clean;
 
       jQuery.each(field_data['columns'], function(column, column_data) {
 
@@ -133,18 +133,18 @@ Drupal.entityController = SC.ObjectController.create(
         var column_clean = column.classify();
 
         // add new column onto field
-        LemonadeStand[field_name_clean].prototype[column_clean] = _this.buildFieldColumn(column_data, column);
+        Drupal._app[field_name_clean].prototype[column_clean] = _this.buildFieldColumn(column_data, column);
       });
 
       // add field need to assosiate content back to the entity
-      LemonadeStand[field_name_clean].prototype['EntityName'] = _this.buildFieldColumn({type: 'varchar'});
-      LemonadeStand[field_name_clean].prototype['Bundle'] = _this.buildFieldColumn({type: 'varchar'});
-      LemonadeStand[field_name_clean].prototype['EntityID'] = _this.buildFieldColumn({type: 'int'});
-      LemonadeStand[field_name_clean].prototype['Delta'] = _this.buildFieldColumn({type: 'int'});
-      LemonadeStand[field_name_clean].prototype['guid'] = _this.buildFieldColumn({type: 'varchar'});
+      Drupal._app[field_name_clean].prototype['EntityName'] = _this.buildFieldColumn({type: 'varchar'});
+      Drupal._app[field_name_clean].prototype['Bundle'] = _this.buildFieldColumn({type: 'varchar'});
+      Drupal._app[field_name_clean].prototype['EntityID'] = _this.buildFieldColumn({type: 'int'});
+      Drupal._app[field_name_clean].prototype['Delta'] = _this.buildFieldColumn({type: 'int'});
+      Drupal._app[field_name_clean].prototype['guid'] = _this.buildFieldColumn({type: 'varchar'});
 
       // add primary key
-      LemonadeStand[field_name_clean].prototype['primaryKey'] = 'guid';
+      Drupal._app[field_name_clean].prototype['primaryKey'] = 'guid';
     });
 
   },

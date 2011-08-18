@@ -6,7 +6,7 @@ Drupal.DataSource = SC.DataSource.extend({
    */
   fetch: function(store, query) {
     var recordType = query.recordType;
-    if (query === SC.Query.local(LemonadeStand.User)) {
+    if (query === SC.Query.local(Drupal._app.User)) {
       SC.Request.getUrl(Drupal._urlFor(recordType))
         .set('isJSON', YES)
         .notify(this, this._didFetchAllUsers, { query: query, store: store })
@@ -25,9 +25,9 @@ Drupal.DataSource = SC.DataSource.extend({
       
       var records = response.get('body');
       
-      records = this.getFieldsFromResults('user', 'user', records, store, LemonadeStand.User);
+      records = this.getFieldsFromResults('user', 'user', records, store, Drupal._app.User);
       
-      store.loadRecords(LemonadeStand.User, records);
+      store.loadRecords(Drupal._app.User, records);
           
       // notify store that we handled the fetch
       store.dataSourceDidFetchQuery(query);
@@ -67,8 +67,8 @@ Drupal.DataSource = SC.DataSource.extend({
   },
 
   updateRecord: function(store, storeKey) {
-    if (SC.kindOf(store.recordTypeFor(storeKey), LemonadeStand.Users)) {
-      url = LemonadeStand._ls_url + "/user/%@.json";
+    if (SC.kindOf(store.recordTypeFor(storeKey), Drupal._app.Users)) {
+      url = Drupal._app._ls_url + "/user/%@.json";
       SC.Request.putUrl(url.fmt(store.idFor(storeKey))).header({
                   'Accept': 'application/json'
               }).json()
@@ -147,11 +147,11 @@ Drupal.DataSource = SC.DataSource.extend({
 
           record = field_column_values.pop();
           if (typeof(record) != 'undefined')
-            record_ids = store.loadRecord(LemonadeStand[field_name], record, field_column_ids.pop());
+            record_ids = store.loadRecord(Drupal._app[field_name], record, field_column_ids.pop());
         }
         else {
           console.log('TODO: submit multi value field');
-          record_ids = store.loadRecords(LemonadeStand[field_name], field_column_values, field_column_ids);
+          record_ids = store.loadRecords(Drupal._app[field_name], field_column_values, field_column_ids);
         }
  
         // remove the original  non classify field from results
