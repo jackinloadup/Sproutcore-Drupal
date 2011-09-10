@@ -25,6 +25,12 @@ Drupal.entityController = SC.ObjectController.create(
   _loadInfoResult: function(result) {
     if(result.status == 200) {
       this.set('content', result.get('body'));
+    } else {
+	SC.AlertPane.error({
+	  message: "Could not load entities",
+	  description: "You broke something. Think real hard about what you did. Now fix it.",
+	  caption: "Fix it and try, try again."
+	});
     }
 
     this.generateModels();
